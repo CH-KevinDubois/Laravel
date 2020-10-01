@@ -3,26 +3,39 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Task;
 
 class taskController extends Controller
 {
     private $tasks;
 
-    public function __construct() {
-
-        $this->tasks = collect([
-            ['id' => 2, 'name' => 'Learn Laravel', 'duration' => 12],
-            ['id' => 3, 'name' => 'Learn RubyOnRails', 'duration' => 24]
-                ])->keyBy('id');
-        }
     public function index ()
     {
-        return view('index')->with('tasks', $this->tasks)
-                                 ->with('test', 'TASK2');
+        $tasks = Task::all();
+        return view('task.index')->with('tasks', $tasks);
     }
 
-    public function show ( $task )
+    public function show( $task )
     {
-        return view('show')->with('task', $this->tasks[$task]);
+        $task = Task::find($task);
+        return view('task.show')->with('task', $task);
+    }
+
+    public function create( )
+    {
+        return view('task.create');
+    }
+
+    public function store (Request $request)
+    {
+        $task = Task::create($request->all());
+        return view('task.show')->with('task', $task);
+    }
+
+    public function destroy( $task )
+    {
+        $task = Task::find($task);
+        $task->delete();
+        return redirect(route('tasks.index'));
     }
 }
