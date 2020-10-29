@@ -18,6 +18,10 @@ class taskController extends Controller
     public function show( $task )
     {
         $task = Task::find($task);
+
+        if($task === null)
+            abort(404);
+
         return view('task.show')->with('task', $task);
     }
 
